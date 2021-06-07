@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { LoadingController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
@@ -19,7 +19,9 @@ export class EditOfferPage implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private placesService: PlacesService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router,
+    private loadingCtrl: LoadingController
   ) { }
 
   private placeSub: Subscription;
@@ -54,7 +56,17 @@ export class EditOfferPage implements OnInit, OnDestroy {
 
   onEditOffer() {
     if (this.form.invalid) return;
-    console.log(this.form);
+    this.loadingCtrl.create({
+      message: 'Updating place...'
+    }).then(loadingEl => {
+      loadingEl.present();
+      this.placesService.updatePlace(this.place.id, this.form.value.title, this.form.value.description).subscribe(() => {
+        loadingEl.dismiss();
+        this.form.reset();
+        this.router.navigate(['/places/tabs/offers']);
+      })
+    })
+
   }
 
 }
