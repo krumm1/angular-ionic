@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from './auth/auth.service';
-// Просмотрел 197 видео
+// Просмотрел 207 видео
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

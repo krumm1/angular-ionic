@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LoadingController, NavController } from '@ionic/angular';
+import { AlertController, LoadingController, NavController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { Place } from '../../place.model';
 import { PlacesService } from '../../places.service';
@@ -21,10 +21,14 @@ export class EditOfferPage implements OnInit, OnDestroy {
     private placesService: PlacesService,
     private navCtrl: NavController,
     private router: Router,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController
   ) { }
 
   private placeSub: Subscription;
+
+  placeId: string;
+  isLoading: boolean = false;
 
   ngOnInit() {
     this.route.paramMap.subscribe(paramMap => {
@@ -32,6 +36,8 @@ export class EditOfferPage implements OnInit, OnDestroy {
         this.navCtrl.navigateBack('/places/tabs/offers');
         return;
       }
+      this.placeId = paramMap.get('placeId');
+      this.isLoading = true;
       this.placeSub = this.placesService.getPlace(paramMap.get('placeId')).subscribe(place => {
         this.place = place;
         this.form = new FormGroup({
@@ -43,6 +49,11 @@ export class EditOfferPage implements OnInit, OnDestroy {
             updateOn: 'blur',
             validators: [Validators.required, Validators.maxLength(30)]
           })
+        })
+        this.isLoading = false;
+      }, () => {
+        this.alertCtrl.create({ header: 'An error occured.', message: 'Place could not be fetched. Please try again later', buttons: [{ text: "OK", handler: () => this.router.navigate(['/places/tabs/offers']) }] }).then(alertEl => {
+          alertEl.present();
         })
       });
     })

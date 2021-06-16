@@ -7,7 +7,7 @@ export class AuthService {
   constructor() { }
 
   private _userIsAuthenticated = true;
-  private _userId = 'xyz';
+  private _userId = 'abc';
 
   get userIsAuthenticated() {
     return this._userIsAuthenticated;
